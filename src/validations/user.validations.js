@@ -18,6 +18,9 @@ class Validation{
         return user === null;
     }
 
+    minRequirement(password){
+        return validator.isStrongPassword(password)
+    }
 }
 
 module.exports = Validation;

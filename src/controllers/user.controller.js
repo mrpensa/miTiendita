@@ -43,8 +43,18 @@ controller.register = async (req, res) => {
         allUsers.forEach(user => {
             names.push(user.name)
         })
+        //Verificar el salto de linea
+        if(!validation.minRequirement(password)){
+            return res.status(400).json({message: `La password no cumple los requisitos minimos. Se requiere:\n
+            Mínimo de 8 caracteres de longitud.\n
+            Al menos una letra minúscula.\n
+            Al menos una letra mayúscula.\n
+            Al menos un dígito numérico.\n
+            Al menos un carácter especial (como !@#$%^&*).`})
+        }
+
         if (validation.correctString(name) && validation.correctEmail(mail) && validation.userNotExists(mail)) {
-            //////////////////////////// modificar de acuerdo al schema
+            //////////////////////////// modificar de acuerdo al schema   
             const passwordSalt = crypto.randomBytes(128).toString("base64");
             const encryptionCycles = crypto.randomInt(5000, 10000);
             const passwordHash = crypto
