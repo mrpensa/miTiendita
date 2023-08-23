@@ -1,0 +1,18 @@
+### Trae todos los usuarios
+GET http://localhost:3001/allUsers
+
+
+### Inserta un nuevo usuario en la BD
+
+POST http://localhost:3001/newUser
+Content-Type: application/json
+
+{
+  "name": "pepe",
+  "mail": "pepe@prueba.com",
+  "password": "123"  
+}
+
+### Elimina un usuario de la base
+### modificado
+DELETE http://localhost:3001/removeUser/mario
