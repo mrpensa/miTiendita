@@ -10,9 +10,18 @@ Content-Type: application/json
 {
   "name": "pepe",
   "mail": "pepe@prueba.com",
-  "password": "123"  
+  "password": "Hola123."  
 }
 
 ### Elimina un usuario de la base
-### modificado
-DELETE http://localhost:3001/removeUser/mario
+DELETE http://localhost:3001/removeUser/pepe
+
+
+## Prueba de login
+POST http://localhost:3001/login
+Content-Type: application/json
+
+{
+  "mail": "pepe@prueba.com",
+  "password": "123"  
+}

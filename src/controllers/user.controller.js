@@ -75,6 +75,7 @@ controller.register = async (req, res) => {
 }
 
 //elimina un usuario de la base
+//mejorar la manera en la que se elimina un usuario, no deberia ser por nombre
 controller.remove = async (req, res) => {
     try {
         const name = req.params.name;
@@ -91,7 +92,7 @@ controller.remove = async (req, res) => {
             return res.status(204).json({message: `Se eliminó el usuario elegido ${name}`});
         }
 
-        console.log('No se encontró el Pokémon elegido');
+        console.log('No se encontró el usuario elegido');
         return res.status(404).json({ message: 'No se encontró el usuario para eliminar' });
 
     } catch (err) {
@@ -99,5 +100,31 @@ controller.remove = async (req, res) => {
         res.status(500).json({ message: 'Error interno del servidor' });
     }
 }
+
+
+controller.login = async (req, res) => {
+    console.log(req.body)
+    try{
+        const {mail, password} = req.body; 
+
+    //crear funcion para reutilizar este paso
+    const passwordSalt = crypto.randomBytes(128).toString("base64");
+    const encryptionCycles = crypto.randomInt(5000, 10000);
+    const passwordHash = crypto
+        .pbkdf2Sync(password, passwordSalt, encryptionCycles, 512, "sha512")
+        .toString("base64");
+
+    const userSearch = await userModel.findOne({mail, passwordHash});
+    
+    if(userSearch != null){
+        return res.status(200).json({message: `Bienvenido ${req.body.name}`})
+    }
+        return res.status(401).json({message: 'Credenciales invalidas'})
+
+    } catch(err){
+        console.log("error" + err)
+    }
+}
+
 
 module.exports = controller;
