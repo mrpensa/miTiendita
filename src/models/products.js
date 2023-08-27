@@ -5,7 +5,7 @@ const ProductModel = new Schema({
     idUser: {
       type: String,
     },
-    tittle: {
+    name: {
         type: String,
         required: true
       },
@@ -27,4 +27,4 @@ const ProductModel = new Schema({
 
 const productModel = mongoose.model('products', ProductModel);
 
-module.exports = userModel;
+module.exports = productModel;

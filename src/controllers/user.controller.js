@@ -4,30 +4,13 @@ const userModel = require("../models/users.js");
 const { param } = require("../routes");
 const crypto = require("crypto");
 const validationUser = require("../validations/user.validations.js");
-
+const Manager = require('./manager.js')
 //conexion a la base de datos para guardar todos los users en un array
-const search = async () => {
-  await connectDB();
-  const allUsers = await userModel.find();
-  return allUsers;
-};
 
+const manager = new Manager()
 //devuelve todos los users registrados en la base de datos
 controller.index = async (req, res) => {
-  try {
-    const allUsers = await search();
-    const names = [];
-    if (allUsers.length === 0) {
-      res.status(200).json({ message: "No hay usuarios registrados" });
-    }
-    allUsers.forEach((user) => {
-      names.push(user.name);
-    });
-    console.log(names.join(", "));
-    //return res.json(allUsers);
-  } catch (er) {
-    console.error(er);
-  }
+  return await manager.returnAll(userModel);
 };
 
 //registra un nuevo user a la base
@@ -119,6 +102,7 @@ controller.login = async (req, res) => {
   console.log(req.body)
   try {
     const { mail, password } = req.body;
+    await connectDB()
     const userSearch = await userModel.findOne({mail});
 
     if (userSearch == null) {
@@ -129,7 +113,7 @@ controller.login = async (req, res) => {
     const passwordHash = crypto
       .pbkdf2Sync(
         password,
-        userSearch.passwordHash,
+        userSearch.passwordSalt,
         userSearch.encryptionCycles,
         512,
         "sha512"
@@ -137,9 +121,10 @@ controller.login = async (req, res) => {
       .toString("base64");
 
     if(passwordHash !== userSearch.passwordHash) {
+        console.log(userSearch)
         return res.status(401).json({ message: "Credenciales invalidas" });
     } 
-    return res.status(200).json({ message: `Bienvenido ${req.body.name}` });
+    return res.status(200).json({ message: `Bienvenido ${userSearch.name}` });
   } catch (err) {
     console.log("error" + err);
   }

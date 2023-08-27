@@ -1,3 +1,2 @@
-- crear interfaces con la base de datos para reutilizar codigo
-- crear loguin de prueba
-- crear conexion de base de datos con los productos
+- Guardar el ID del usuario para registrar un productos
+- Registrar productos

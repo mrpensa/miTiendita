@@ -17,11 +17,14 @@ Content-Type: application/json
 DELETE http://localhost:3001/removeUser/pepe
 
 
-## Prueba de login
+### Prueba de login
 POST http://localhost:3001/login
 Content-Type: application/json
 
 {
   "mail": "pepe@prueba.com",
-  "password": "123"  
+  "password": "Hola123."  
 }
+
+### Trae todos los productos
+GET http://localhost:3001/allProducts
