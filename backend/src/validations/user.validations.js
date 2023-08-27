@@ -12,12 +12,6 @@ class Validation{
         return validator.isEmail(mail);
     }
 
-    async userNotExists(mail){
-        await connectDB()
-        const user = await userModel.findOne({mail})
-        return user === null;
-    }
-
     minRequirement(password){
         return validator.isStrongPassword(password)
     }

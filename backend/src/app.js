@@ -4,6 +4,9 @@ const path = require('path')
 const cors = require('cors')
 const bodyParser = require('body-parser');
 const app = express()
+const dbConecction = require('../src/dbConecction/conecction.js')
+dbConecction()
+
 
 app.disable('x-powered-by');
 app.use(express.json());

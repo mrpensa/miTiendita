@@ -8,8 +8,8 @@ POST http://localhost:3001/newUser
 Content-Type: application/json
 
 {
-  "name": "pepe",
-  "mail": "pepe@prueba.com",
+  "name": "eladio",
+  "mail": "eladio@prueba.com",
   "password": "Hola123."  
 }
 
