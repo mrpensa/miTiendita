@@ -10,4 +10,5 @@ productController.index = async (req, res) => {
   return await manager.returnAll(productModel);
 };
 
+
 module.exports = productController;
