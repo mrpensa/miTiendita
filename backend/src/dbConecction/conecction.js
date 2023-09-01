@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const env = require('dotenv').config()
 
-const uri = `mongodb+srv://mrpensa:Marfl-97@cluster0.o5bnq7t.mongodb.net/store?retryWrites=true&w=majority`;
+const uri = process.env.URL
 
 module.exports = async () => {
     try {

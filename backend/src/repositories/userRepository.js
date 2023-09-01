@@ -38,6 +38,13 @@ class UserRepository{
         }
     }
 
+    async changeData(object){
+        try{
+            return await userModel.findByIdAndUpdate(object);
+        } catch(err) { return err}
+    }
+
+
 }
 
 module.exports = UserRepository;

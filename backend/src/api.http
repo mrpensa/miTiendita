@@ -8,13 +8,13 @@ POST http://localhost:3001/newUser
 Content-Type: application/json
 
 {
-  "name": "eladio",
-  "mail": "eladio@prueba.com",
+  "name": "laura",
+  "mail": "LAUra@prueba.com",
   "password": "Hola123."  
 }
 
 ### Elimina un usuario de la base
-DELETE http://localhost:3001/removeUser/pepe
+DELETE http://localhost:3001/removeUser/laura
 
 
 ### Prueba de login
@@ -22,9 +22,31 @@ POST http://localhost:3001/login
 Content-Type: application/json
 
 {
-  "mail": "pepe@prueba.com",
+  "mail": "lauRA@prueba.com",
   "password": "Hola123."  
 }
 
 ### Trae todos los productos
 GET http://localhost:3001/allProducts
+
+
+### Inserta un nuevo producto en la BD
+
+POST http://localhost:3001/newProduct
+Content-Type: application/json
+
+{
+  "name": "zapatos",
+  "description": "zapatillas blancas deportivas air force one",
+  "image": "https://imagenes.elpais.com/resizer/6MWrX16d-D4Fe7cUEDABqTyxRhs=/1200x0/cloudfront-eu-central-1.images.arcpublishing.com/prisa/D2ONULSKOJFBDJCDEI3F6L7SNM.png",
+  "price": 500  
+}
+
+### Cambio de datos en el perfil
+
+PUT http://localhost:3001/changeProfile
+Content-Type: application/json
+
+{
+  "name": "laurita"
+}

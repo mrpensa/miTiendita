@@ -7,7 +7,10 @@ router.get('/allUsers', controller.index);
 router.post('/newUser', controller.register);
 router.delete('/removeUser/:name', controller.remove)
 router.post('/login', controller.login)
+router.put('/changeProfile', controller.changeProfile)
 
 router.get('/allProducts', productController.index);
+router.post('/newProduct', productController.register);
+
 
 module.exports = router;

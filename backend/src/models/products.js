@@ -4,6 +4,7 @@ const {Schema} = mongoose
 const ProductModel = new Schema({
     idUser: {
       type: String,
+      require: true
     },
     name: {
         type: String,
@@ -14,7 +15,8 @@ const ProductModel = new Schema({
         required: true
       },
     image: {
-        type: String
+        type: String,
+        require: true
       },
     price: {
         type: Number,

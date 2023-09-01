@@ -5,10 +5,13 @@ const { param, search } = require("../routes");
 const crypto = require("crypto");
 const validationUser = require("../validations/user.validations.js");
 const Manager = require('./manager.js')
-const UserRepository = require('../repositories/userRepository')
+const UserRepository = require('../repositories/userRepository');
+const Validation = require("../validations/user.validations.js");
 //conexion a la base de datos para guardar todos los users en un array
 
 const manager = new Manager()
+const userRepository = new UserRepository()
+const validation = new validationUser()
 //devuelve todos los users registrados en la base de datos
 controller.index = async (req, res) => {
   return await manager.returnAll(userModel);
@@ -17,12 +20,11 @@ controller.index = async (req, res) => {
 //registra un nuevo user a la base
 controller.register = async (req, res) => {
 
-    const userRepository = new UserRepository()
-    const validation = new validationUser();
-    const { name, mail, password } = req.body;
+   
+    let { name, mail, password } = req.body;
     //// mejorar esta busqueda con un find y cambiarlo para que lo busque por mail y no por nombre
+    mail = mail.toLowerCase();
     const searchUser = await userRepository.findByEmail(mail);
-  
     if(searchUser.error){
       console.log(searchUser.error)
       return res.status(500).json({message: 'Error interno del servidor'})
@@ -55,13 +57,18 @@ controller.register = async (req, res) => {
         .pbkdf2Sync(password, passwordSalt, encryptionCycles, 512, "sha512")
         .toString("base64");
 
-      userRepository.saveUser({
+      
+      const save =  userRepository.saveUser({
         name,
         mail,
         passwordHash,
         passwordSalt,
         encryptionCycles,
       });
+
+      if(save instanceof Error) {
+        return res.status(401).json({message: 'tienes un error mi pana'})
+      }
 
       console.log(JSON.stringify(`Se registro con exito a ${req.body.name}`));
       res.status(201);
@@ -103,12 +110,17 @@ controller.remove = async (req, res) => {
   }
 };
 
+
+
 controller.login = async (req, res) => {
   console.log(req.body)
   try {
     const { mail, password } = req.body;
+    
+    //mover a user repository?
+    const m = mail.toLowerCase()
     await connectDB()
-    const userSearch = await userModel.findOne({mail});
+    const userSearch = await userModel.findOne({mail: m});
 
     if (userSearch == null) {
       return res.status(401).json({ message: "Credenciales invalidas" });
@@ -129,10 +141,38 @@ controller.login = async (req, res) => {
         console.log(userSearch)
         return res.status(401).json({ message: "Credenciales invalidas" });
     } 
-    return res.status(200).json({ message: `Bienvenido ${userSearch.name}` });
+
+    req.session.uid = userSearch._id
+    return res.status(200).json({ message: `Welcome ${userSearch.name}` });
   } catch (err) {
     console.log("error" + err);
   }
 };
+
+//configurar para cambiar mas datos
+controller.changeProfile = async (req, res) => {
+
+  const {_id, name} = req.body;
+
+  if(!(validation.correctString(name))) {
+    return res.status(400).json({message: `Falta completar algun campo`})
+  }
+
+  if(req.session.uid != _id){
+    //corregir respuesta
+    //Siempre me va a venir por este camino, necesito guardar el usuario logueado para mantener su ID de alguna manera
+      //como hago si se loguean 5 usuarios al mismo tiempo
+    console.log(req.session.uid)
+    console.log(req.body)
+    return res.status(400).json({message: `No estas logueado con el mismo user`})
+  }
+
+  const saveChange = validation.changeProfile({name})
+  if(saveChange instanceof Error){
+    return res.status(400).json({message: `Hay un error con los datos proporcionados`})
+  }
+
+  return res.json({message: `Cambios realizados con exitos`})
+}
 
 module.exports = controller;
