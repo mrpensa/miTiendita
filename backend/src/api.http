@@ -1,10 +1,10 @@
 ### Trae todos los usuarios
-GET http://localhost:3001/allUsers
+GET http://localhost:3001/users/all
 
 
 ### Inserta un nuevo usuario en la BD
 
-POST http://localhost:3001/newUser
+POST http://localhost:3001/users/create
 Content-Type: application/json
 
 {
@@ -14,11 +14,11 @@ Content-Type: application/json
 }
 
 ### Elimina un usuario de la base
-DELETE http://localhost:3001/removeUser/laura
+DELETE http://localhost:3001/users/delete
 
 
 ### Prueba de login
-POST http://localhost:3001/login
+POST http://localhost:3001/users/login
 Content-Type: application/json
 
 {
@@ -48,5 +48,6 @@ PUT http://localhost:3001/changeProfile
 Content-Type: application/json
 
 {
-  "name": "laurita"
+  "name": "laurita",
+  "password": "Hola123."  
 }
