@@ -1,17 +1,32 @@
 const productController = {};
 //const connectDB = require("../dbConecction/conecction");
-const productRouter = require();
+const productRouter = require('express').Router();
 
 const productModel = require("../models/products.js");
 const validationProduct = require("../validations/product.validations.js");
-const Manager = require("./manager.js");
 const productRepository = require("../repositories/productRepository.js");
 //conexion a la base de datos para guardar todos los users en un array
 
-const manager = new Manager();
+const productRepo = new productRepository();
+
+
 //devuelve todos los users registrados en la base de datos
 productRouter.get("/get", async (req, res) => {
-  return await manager.returnAll(productModel);
+  try {
+    console.log('hola')
+    const allUsers = await productRepo.getAll();
+    const names = [];
+    if (allUsers.length === 0) {
+      console.log.json({ message: "No hay usuarios registrados" });
+    }
+    //cambiar 'name' por algo que tambien tengan los productos
+    allUsers.forEach((user) => {
+      names.push(user.name);
+    });
+    console.log(names.join(", "));
+  } catch (er) {
+    console.error(er);
+  }
 });
 
 //verificar como pasar imagen por defecto en caso de no haber
@@ -21,7 +36,6 @@ productRouter.post("/create", (req, res) => {
     return res.status(400).json({ message: "no pueden quedar datos vacios" });
 
   const validation = new validationProduct();
-  const productRepo = new productRepository();
   let { name, description, image, price } = req.body;
 
   if (
@@ -52,4 +66,4 @@ productRouter.post("/create", (req, res) => {
   return res.json({ message: `Producto agregado con exito` });
 });
 
-modules.export = productController;
+module.exports = productRouter;

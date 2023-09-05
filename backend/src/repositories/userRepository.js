@@ -12,6 +12,10 @@ class UserRepository{
         return parametros;
     } 
 
+    async getAll(){
+        return await userModel.find();
+    }
+
     async findById(_id){
         try {
             return await userModel.findById(_id);
@@ -37,10 +41,12 @@ class UserRepository{
             return error;
         }
     }
-
+    // eliminar
     async changeData(object){
         try{
-            return await userModel.findByIdAndUpdate(object);
+            let newUserData = this.findByEmail(email);
+
+            return newUserData
         } catch(err) { return err}
     }
 

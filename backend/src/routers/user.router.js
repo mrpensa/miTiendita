@@ -1,19 +1,31 @@
 const usersRouter = require("express").Router();
-const connectDB = require("../dbConecction/conecction");
+const connectDB = require("../database/connection");
 const userModel = require("../models/users.js");
 const crypto = require("crypto");
 const validationUser = require("../validations/user.validations.js");
-const Manager = require("./manager.js");
 const UserRepository = require("../repositories/userRepository");
 
 //conexion a la base de datos para guardar todos los users en un array
 
-const manager = new Manager();
 const userRepository = new UserRepository();
 const validation = new validationUser();
 
 usersRouter.get("/get", async (req, res) => {
-  return await manager.returnAll(userModel);
+  try {
+    console.log('hola')
+    const allUsers = await userRepository.getAll();
+    const names = [];
+    if (allUsers.length === 0) {
+      console.log.json({ message: "No hay usuarios registrados" });
+    }
+    //cambiar 'name' por algo que tambien tengan los productos
+    allUsers.forEach((user) => {
+      names.push(user.name);
+    });
+    console.log(names.join(", "));
+  } catch (er) {
+    console.error(er);
+  }
 });
 
 //registra un nuevo user a la base
@@ -96,8 +108,11 @@ usersRouter.post("/delete", async (req, res) => {
 });
 
 usersRouter.post("/login", async (req, res) => {
-  if (req.session.uid != null)
-    return res.sendStatus(401).json({ message: "Ya estas logeado" });
+  console.log(req.body)
+  if (req.session.uid != null){
+
+    return res.status(401).json({ message: "Ya estas logeado" });
+  }
   const { mail, password } = req.body;
 
   //mover a user repository?
@@ -160,14 +175,14 @@ usersRouter.post("/update", async (req, res) => {
     return res.status(400).json({ message: `Falta completar algun campo` });
   }
 
-  const saveChange = validation.changeProfile({ name });
-  if (saveChange instanceof Error) {
-    return res
-      .status(500)
-      .json({ message: `Hay un error con los datos proporcionados` });
-  }
-
+  userRepository.saveUser({ name })
   return res.json({ message: `Cambios realizados con exitos` });
 });
+
+
+usersRouter.get("/logout", async (req, res) => {
+    req.session.uid = undefined
+    res.json({message: `deslogueado`}) 
+})
 
 module.exports = usersRouter;

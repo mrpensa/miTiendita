@@ -12,6 +12,10 @@ class productRepository{
         }
     }
 
+    async getAll(){
+        return await productModel.find();
+    }
+
 }
 
 module.exports = productRepository;

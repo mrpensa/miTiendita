@@ -1,11 +1,12 @@
 const express = require('express')
-const router = require('./routes/index.js')
 const path = require('path')
 const cors = require('cors')
 const bodyParser = require('body-parser');
 const app = express()
-const dbConecction = require('../src/dbConecction/conecction.js')
+const dbConecction = require('../src/database/connection')
 const env = require('dotenv').config()
+const usersRouter = require('./routers/user.router')
+const productsRouter = require('./routers/product.router')
 dbConecction()
 
 
@@ -36,20 +37,12 @@ app.use(require('express-session')({
   resave: true,
   saveUninitialized: true
 }));
+app.use(express.json());
 
-app.get('/', function(req, res) {
-  res.send('Hello ' + JSON.stringify(req.session));
-});
-
-server = app.listen(3000);
-
-
-
-
+app.use('/users', usersRouter);
+app.use('/products', productsRouter);
 
 app.disable('x-powered-by');
-app.use(express.json());
-app.use(router);
 app.use(cors);
 
 

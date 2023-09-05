@@ -51,3 +51,8 @@ Content-Type: application/json
   "name": "laurita",
   "password": "Hola123."  
 }
+
+
+### Desloguearse con usuario
+
+GET http://localhost:3001/users/logout
