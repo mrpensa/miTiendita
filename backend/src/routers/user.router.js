@@ -12,7 +12,7 @@ const validation = new validationUser();
 
 usersRouter.get("/get", async (req, res) => {
   try {
-    console.log('hola')
+    console.log("hola");
     const allUsers = await userRepository.getAll();
     const names = [];
     if (allUsers.length === 0) {
@@ -44,19 +44,20 @@ usersRouter.post("/create", async (req, res) => {
   }
 
   //Verificar el salto de linea
-  if (!validation.minRequirement(password)) {
-    return res.status(400).json({
-      message: `La password no cumple los requisitos minimos. Se requiere:\n
+  if (!validation.minRequirement(password)) 
+    return {
+      error: {
+        message: `La password no cumple los requisitos minimos. Se requiere:\n
             Mínimo de 8 caracteres de longitud.\n
             Al menos una letra minúscula.\n
             Al menos una letra mayúscula.\n
             Al menos un dígito numérico.\n
             Al menos un carácter especial (como !@#$%^&*).`,
-    });
+      },
   }
 
   if (!validation.correctString(name) || !validation.correctEmail(mail))
-    return res.sendStatus(400).json({ message: "Datos invalidos" });
+    return res.status(400).json({ message: "Datos invalidos" });
 
   const passwordSalt = crypto.randomBytes(128).toString("base64");
   const encryptionCycles = crypto.randomInt(5000, 10000);
@@ -108,9 +109,8 @@ usersRouter.post("/delete", async (req, res) => {
 });
 
 usersRouter.post("/login", async (req, res) => {
-  console.log(req.body)
-  if (req.session.uid != null){
-
+  console.log(req.body);
+  if (req.session.uid != null) {
     return res.status(401).json({ message: "Ya estas logeado" });
   }
   const { mail, password } = req.body;
@@ -141,48 +141,52 @@ usersRouter.post("/login", async (req, res) => {
   }
 
   req.session.uid = userSearch._id;
+
   return res.status(200).json({ message: `Welcome ${userSearch.name}` });
 });
 
 //configurar para cambiar mas datos
-usersRouter.post("/update", async (req, res) => {
+usersRouter.put("/update", async (req, res) => {
   const { name, password } = req.body;
-  if (req.session.uid != null)
-    return res.sendStatus(401).json({
+
+  if (!req.session.uid)
+    return res.status(401).json({
       message: "No estas autorizado a ejecutar esta accion",
     });
-  const userOrError = userRepository.findById(req.session.uid);
+
+  if (!validation.correctString(name))
+    return res.status(400).json({ message: `Falta completar algun campo` });
+
+  const userOrError = await userRepository.findById(req.session.uid);
 
   if (userOrError instanceof Error)
-    return res.sendstatus(401).json({
+    return res.status(401).json({
       message: "no estas autorizado a ejecutar esta accion",
     });
-
-  const passwordHash = crypto.pbkdf2Sync(
-    password,
-    userSearch.passwordSalt,
-    userSearch.encryptionCycles,
-    512,
-    "sha512"
-  );
+  //  TODO: DO SOMETHING IF USER IS NOT FOUND
+  console.log(userOrError);
+  const passwordHash = crypto
+    .pbkdf2Sync(
+      password,
+      userOrError.passwordSalt,
+      userOrError.encryptionCycles,
+      512,
+      "sha512"
+    )
+    .toString("base64");
 
   if (passwordHash != userOrError.passwordHash)
-    return res.sendstatus(401).json({
+    return res.status(401).json({
       message: "no estas autorizado a ejecutar esta accion",
     });
 
-  if (!validation.correctString(name)) {
-    return res.status(400).json({ message: `Falta completar algun campo` });
-  }
-
-  userRepository.saveUser({ name })
+  userRepository.saveUser({ name });
   return res.json({ message: `Cambios realizados con exitos` });
 });
 
-
 usersRouter.get("/logout", async (req, res) => {
-    req.session.uid = undefined
-    res.json({message: `deslogueado`}) 
-})
+  req.session.uid = undefined;
+  res.json({ message: `deslogueado` });
+});
 
 module.exports = usersRouter;

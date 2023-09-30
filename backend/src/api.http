@@ -44,7 +44,7 @@ Content-Type: application/json
 
 ### Cambio de datos en el perfil
 
-PUT http://localhost:3001/changeProfile
+PUT http://localhost:3001/users/update
 Content-Type: application/json
 
 {
